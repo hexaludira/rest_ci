@@ -1,79 +1,56 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+    Class Kontak extends CI_Controller{
+        var $API = "";
 
-require APPPATH . '/libraries/REST_Controller.php';
-use Restserver\libraries\REST_Controller;
+        function __construct(){
+            parent::__construct();
+            $this->API="http://localhost/rest_ci/index.php";
+            $this->load->library('session');
+            $this->load->library('curl');
+            $this->load->helper('form');
+            $this->load->helper('url');
 
-class Kontak extends REST_Controller {
-
-    function __construct($config = 'rest') {
-        parent::__construct($config);
-        $this->load->database();
-    }
-
-    //menampilkan data kontak
-    function index_get() {
-        $id = $this->get('id');
-        if($id == '') {
-            $kontak = $this->db->get('telepon')->result();
-        } else {
-            $this->db->where('id', $id);
-            $kontak = $this->db->get('telepon')->result();
         }
-        $this->response($kontak, 200);
-    }
 
-    //mengirim atau menambah kontak baru
-    function index_post() {
-        $data = array (
-            'id' => $this->post('id'),
-            'nama' => $this->post('nama'),
-            'nomor' => $this->post('nomor')
-        );
-
-        $insert = $this->db->insert('telepon', $data);
-
-        if($insert) {
-            $this->response($data, 200);
-        } else {
-            $this->response(array('status' => 'fail', 502));
+        //menampilkan data kontak
+        function index() {
+            $data['datakontak'] = json_decode($this->curl->simple_get($this->API.'/kontak'));
+            $this->load->view('kontak/list', $data);
         }
-    }
 
-    //memperbarui/ update data kontak yang telah ada
-    function index_put() {
-        $id = $this->put('id');
-
-        $data = array (
-            'id' => $this->put('id'),
-            'nama' => $this->put('nama'),
-            'nomor' => $this->put('nomor')
-        );
-
-        $this->db->where('id', $id);
-
-        $update = $this->db->update('telepon', $data);
-
-        if ($update) {
-            $this->response($data, 200);
-        } else {
-            $this->response(array('status' => 'fail', 502));
+        //insert data kontak
+        function create(){
+            if(isset($_POST['submit'])){
+                $data = array(
+                    'id' => $this->input->post('id'),
+                    'nama' => $this->input->post('nama'),
+                    'nomor' => $this->input->post('nomor')
+                );
+                $insert = $this->curl->simple_post($this->API.'/kontak', $data, array(CURLOPT_BUFFERSIZE => 10));
+                if($insert) {
+                    $this->session->set_flashdata('hasil','Insert Data Berhasil');
+                } else {
+                    $this->session->set_flashdata('hasil','Insert Data Gagal');
+                }
+                redirect('kontak');
+            } else {
+               $this->load->view('kontak/create');
+            }
         }
-    }
 
-    //menghapus salah satu data kontak
-    function index_delete() {
-        $id = $this->delete('id');
-        $this->db->where('id', $id);
-
-        $delete = $this->db->delete('telepon');
-
-        if ($delete) {
-            $this->response(array('status' => 'success'), 201);
-        } else {
-            $this->response(array('status' => 'fail', 502));
+        //edit data kontak
+        function edit(){
+            if(isset($_POST['submit'])){
+                $data = array(
+                    'id' => $this->input->post('id'),
+                    'nama' => $this->input->post('nama'),
+                    'nomor' => $this->input->post('nomor')
+                );
+                $update = $this->curl->simple_put($this)
+            }
         }
+
+
     }
-}
 
 ?>
