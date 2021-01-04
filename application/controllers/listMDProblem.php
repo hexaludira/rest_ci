@@ -11,27 +11,30 @@ class Kontak extends REST_Controller {
         $this->load->database();
     }
 
-    //menampilkan data kontak
+    //menampilkan data metal_problem
     function index_get() {
         $id = $this->get('id');
         if($id == '') {
-            $kontak = $this->db->get('telepon')->result();
+            $list_problem = $this->db->get('metal_problem')->result();
         } else {
             $this->db->where('id', $id);
-            $kontak = $this->db->get('telepon')->result();
+            $list_problem = $this->db->get('metal_problem')->result();
         }
-        $this->response($kontak, 200);
+        $this->response($list_problem, 200);
     }
 
     //mengirim atau menambah kontak baru
     function index_post() {
         $data = array (
             'id' => $this->post('id'),
-            'nama' => $this->post('nama'),
-            'nomor' => $this->post('nomor')
+            'date' => $this->post('date'),
+            'detail' => $this->post('detail'),
+            'location' => $this->post('location'),
+            'status' => $this->post('status'),
+            'remark' => $this->post('remark')
         );
 
-        $insert = $this->db->insert('telepon', $data);
+        $insert = $this->db->insert('metal_problem', $data);
 
         if($insert) {
             $this->response($data, 200);
@@ -40,19 +43,22 @@ class Kontak extends REST_Controller {
         }
     }
 
-    //memperbarui/ update data kontak yang telah ada
+    //memperbarui/ update data metal_problem yang telah ada
     function index_put() {
         $id = $this->put('id');
 
         $data = array (
             'id' => $this->put('id'),
-            'nama' => $this->put('nama'),
-            'nomor' => $this->put('nomor')
+            'date' => $this->put('date'),
+            'detail' => $this->put('detail'),
+            'location' => $this->put('location'),
+            'status' => $this->put('status'),
+            'remark' => $this->put('remark')
         );
 
         $this->db->where('id', $id);
 
-        $update = $this->db->update('telepon', $data);
+        $update = $this->db->update('metal_problem', $data);
 
         if ($update) {
             $this->response($data, 200);
@@ -61,12 +67,12 @@ class Kontak extends REST_Controller {
         }
     }
 
-    //menghapus salah satu data kontak
+    //menghapus salah satu data metal_problem
     function index_delete() {
         $id = $this->delete('id');
         $this->db->where('id', $id);
 
-        $delete = $this->db->delete('telepon');
+        $delete = $this->db->delete('metal_problem');
 
         if ($delete) {
             $this->response(array('status' => 'success'), 201);
