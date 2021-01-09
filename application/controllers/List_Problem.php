@@ -68,17 +68,34 @@ class List_Problem extends REST_Controller {
     }
 
     //menghapus salah satu data metal_problem
-    function index_delete() {
-        $id = $this->delete('id');
-        $this->db->where('id', $id);
+    // function index_() {
+    //     $id = $this->get('id');
+    //     //$id = $this->delete('id');
+    //     $this->db->where('id', $id);
 
+    //     $delete = $this->db->delete('metal_problem');
+
+    //     if ($delete) {
+    //         $this->response(array('status' => $id), 200);
+    //     } else {
+    //         $this->response(array('status' => 'fail', 502));
+    //     }
+    // }
+    function index_delete($id=null)
+    {
+        //$id = $this->delete('id');
+        //$id = $this->delete('id');
+        //$id = $this->input->server('REQUEST_METHOD');
+        
+        
+        $del_id = $this->db->where('id', $id);
         $delete = $this->db->delete('metal_problem');
-
+        
         if ($delete) {
-            $this->response(array('status' => 'success'), 201);
-        } else {
-            $this->response(array('status' => 'fail', 502));
-        }
+                $this->response(array('status' => $id.' deleted'), 200);
+            } else {
+                $this->response(array('status' => 'fail', 502));
+            }
     }
 }
 
